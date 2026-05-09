@@ -2,98 +2,288 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HITOTSUGI SHOP STORIES</title>
     <style>
-        /* 基本スタイル：Googleのバーがないので、ここから100%制御できます */
-        body, html {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: #fdfaf5; overflow: hidden; font-family: 'Helvetica Neue', Arial, sans-serif;
+        :root {
+            --text-main: #3d4036; 
+            --text-sub: #696b60; 
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --accent-color: #f49576;
+            --font-family: 'Hiragino Maru Gothic ProN', 'Rounded Mplus 1c', 'Meiryo', sans-serif;
         }
-        header { 
-            margin-bottom: 50px; text-align: left; 
-            padding-left: 40px; padding-top: 30px; 
-        }
-        .logo h1 { font-size: 80px; margin: 0; color: #333; letter-spacing: 4px; }
-        .logo .sub-name { display: block; font-size: 34px; letter-spacing: 1px; margin-left: 25px; color: #555; }
 
-        /* グリッドレイアウト */
-        .grid {
-            display: grid; grid-template-columns: repeat(4, 1fr);
-            gap: 20px; padding: 0 40px; max-width: 1200px; margin: 0 auto;
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font-family); }
+
+        body {
+            background-image: url('Gemini_Generated_Image_b52deb52deb52deb.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            background-color: #fcf8f2;
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+            overflow: hidden;
+            cursor: pointer;
         }
+
+        .container { width: 100%; max-width: 1100px; z-index: 1; }
+
+        header { margin-bottom: 45px; text-align: left; padding-left: 10px; }
+        .logo { font-weight: bold; line-height: 1.1; color: var(--text-main); text-transform: uppercase; }
+        .logo .brand-name { display: block; font-size: 44px; letter-spacing: 2px; }
+        .logo .sub-name { display: block; font-size: 34px; letter-spacing: 1px; }
+
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); 
+            gap: 30px; 
+        }
+
         .card {
-            background: white; border-radius: 20px; padding: 30px 20px;
-            text-align: center; text-decoration: none; color: #333;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: transform 0.2s; cursor: pointer;
+            background-color: var(--card-bg);
+            border-radius: 40px;
+            padding: 40px 20px;
+            text-align: center;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            color: inherit;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: none;
+            cursor: pointer;
         }
-        .card:active { transform: scale(0.95); }
-        .icon-wrap img { width: 80px; height: 80px; margin-bottom: 15px; border-radius: 15px; }
-        .card h2 { margin: 10px 0 5px; font-size: 22px; }
-        .card p { margin: 0; font-size: 14px; color: #888; }
 
-        /* アプリ表示用の枠（全画面対応） */
+        .card:hover { transform: translateY(-12px); box-shadow: 0 20px 45px rgba(0,0,0,0.12); background-color: #ffffff; }
+
+        .icon-wrap { width: 160px; height: 160px; margin-bottom: 20px; display: flex; justify-content: center; align-items: center; }
+        .icon-wrap img { width: 100%; height: 100%; object-fit: contain; }
+
+        .card h2 { font-size: 26px; margin-bottom: 12px; font-weight: bold; }
+        .card p { font-size: 15px; color: var(--text-sub); line-height: 1.6; }
+
+        /* --- アプリ表示（iframe）エリア --- */
         #appViewer {
-            display: none; position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%; background: white; z-index: 1000;
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #fff; z-index: 2000;
         }
-        #targetFrame { width: 100%; height: 100%; border: none; }
+        iframe { width: 100%; height: 100%; border: none; }
+
         .back-btn {
-            position: fixed; bottom: 20px; right: 20px;
-            background: rgba(0,0,0,0.7); color: white; border: none;
-            padding: 15px 25px; border-radius: 30px; font-size: 16px; cursor: pointer; z-index: 1001;
+            position: fixed; bottom: 20px; right: 20px; z-index: 3000;
+            background: var(--accent-color); color: white; border: none;
+            padding: 15px 25px; border-radius: 50px; cursor: pointer; font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            opacity: 0.85; transition: 0.3s;
         }
+        .back-btn:hover { opacity: 1; transform: scale(1.05); }
+
+        /* --- 全画面復帰オーバーレイ --- */
+        #fsOverlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(61,64,54,0.88);
+            z-index: 9999; cursor: pointer;
+            justify-content: center; align-items: center;
+            flex-direction: column; gap: 16px;
+        }
+        #fsOverlay.show { display: flex; }
+        .fs-restore-icon { font-size: 4rem; animation: fsPulse 1.5s ease-in-out infinite; }
+        .fs-restore-text { color: white; font-size: 1.4rem; font-weight: 800; }
+        .fs-restore-sub  { color: rgba(255,255,255,0.5); font-size: 0.85rem; }
+        @keyframes fsPulse {
+            0%,100% { transform: scale(1); opacity: 0.8; }
+            50%     { transform: scale(1.15); opacity: 1; }
+        }
+
+        /* --- モーダル --- */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px); z-index: 4000;
+            justify-content: center; align-items: center;
+        }
+        .modal-content { background: #fff; padding: 40px; border-radius: 40px; width: 90%; max-width: 400px; text-align: center; position: relative; }
+        .pin-display { font-size: 32px; letter-spacing: 15px; margin: 20px 0; height: 40px; color: var(--accent-color); }
+        .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .numpad button { background: #fcf8f2; border: none; height: 60px; font-size: 20px; border-radius: 50%; cursor: pointer; }
+        .settings-list { text-align: left; margin-top: 20px; }
+        .link-btn { display: block; background: #f9f9f9; padding: 15px; margin-bottom: 10px; border-radius: 15px; text-decoration: none; color: #333; font-weight: bold; border: 1px solid #eee; }
+        .close-x { position: absolute; top: 20px; right: 20px; font-size: 24px; cursor: pointer; border: none; background: none; }
     </style>
 </head>
 <body>
 
-<header>
-    <div class="logo">
-        <h1>HITOTSUGI</h1>
-        <span class="sub-name">SHOP STORIES</span>
-    </div>
-</header>
+<body onclick="launchFullScreen(document.documentElement)">
 
-<div class="grid">
-    <div class="card" onclick="openApp('https://script.google.com/macros/s/AKfycbz2jvVWg1Hn46G17xkMn2wzdHS83gWipB_OmlLXmPrO-1t38zaKTzQoYbWrTlhRqAZz5Q/exec')">
-        <div class="icon-wrap"><img src="https://lh3.googleusercontent.com/u/0/d/1uS9RJbJQeKfnKIf_4gn7jqK95IGlOsri" alt="レジ"></div>
-        <h2>レジシステム</h2>
-        <p>新規注文へ</p>
-    </div>
-    <div class="card" onclick="openApp('https://script.google.com/macros/s/AKfycbz2jvVWg1Hn46G17xkMn2wzdHS83gWipB_OmlLXmPrO-1t38zaKTzQoYbWrTlhRqAZz5Q/exec?page=admin')">
-        <div class="icon-wrap"><img src="https://lh3.googleusercontent.com/u/0/d/16-Ckrw-R_9rfve8d8obEPCaBM-y2mypB" alt="売上"></div>
-        <h2>売上管理</h2>
-        <p>本日の売上表示</p>
-    </div>
-    <div class="card" onclick="openApp('https://script.google.com/macros/s/AKfycbymOi6GXmAPwVw27yicLIJtKoSXqa9TqmflcQFiHWSV9PasY8fr-5XcUVOblKX2cSo/exec')">
-        <div class="icon-wrap"><img src="https://lh3.googleusercontent.com/u/0/d/1hZlglWZHqQQC9eEdn0A8JbL9lp2vjVvE" alt="在庫"></div>
-        <h2>在庫管理</h2>
-        <p>在庫データ確認</p>
-    </div>
-    <div class="card" onclick="alert('設定は準備中です')">
-        <div class="icon-wrap"><img src="https://lh3.googleusercontent.com/u/0/d/1zvkao0wAcBOorLxsv2T63sj0LsQ2Azye" alt="設定"></div>
-        <h2>設定</h2>
-        <p>管理リンク</p>
-    </div>
-</div>
 
-<div id="appViewer">
-    <button class="back-btn" onclick="closeApp()">メニューに戻る</button>
-    <iframe id="targetFrame" src=""></iframe>
-</div>
+    <!-- 全画面復帰オーバーレイ -->
+    <div id="fsOverlay" onclick="restoreFS()">
+        <div class="fs-restore-icon">⛶</div>
+        <div class="fs-restore-text">タップして全画面に戻る</div>
+        <div class="fs-restore-sub">印刷等により全画面が解除されました</div>
+    </div>
 
-<script>
-    function openApp(url) {
-        document.getElementById('targetFrame').src = url;
-        document.getElementById('appViewer').style.display = 'block';
+    <div id="main-ui" class="container">
+        <header>
+            <div class="logo">
+                <span class="brand-name">HITOTSUGI</span>
+                <span class="sub-name">SHOP STORIES</span>
+            </div>
+        </header>
+
+        <div class="grid">
+            <div class="card" onclick="openApp('https://script.google.com/macros/s/AKfycbz2jvVWg1Hn46G17xkMn2wzdHS83gWipB_OmlLXmPrO-1t38zaKTzQoYbWrTlhRqAZz5Q/exec')">
+                <div class="icon-wrap"><img src="icon-pos.png" alt="レジ"></div>
+                <h2>レジシステム</h2>
+                <p>新規注文へ</p>
+            </div>
+            <div class="card" onclick="openApp('https://script.google.com/macros/s/AKfycbz2jvVWg1Hn46G17xkMn2wzdHS83gWipB_OmlLXmPrO-1t38zaKTzQoYbWrTlhRqAZz5Q/exec?page=admin')">
+                <div class="icon-wrap"><img src="icon-sales.png" alt="売上"></div>
+                <h2>売上管理</h2>
+                <p>本日の売上表示</p>
+            </div>
+            <div class="card" onclick="openApp('https://script.google.com/macros/s/AKfycbymOi6GXmAPwVw27yicLIJtKoSXqa9TqmflcQFiHWSV9PasY8fr-5XcUVOblKX2cSo/exec')">
+                <div class="icon-wrap"><img src="icon-stock.png" alt="在庫"></div>
+                <h2>在庫管理</h2>
+                <p>在庫データ確認</p>
+            </div>
+            <div class="card" onclick="openPinModal()">
+                <div class="icon-wrap"><img src="icon-settings.png" alt="設定"></div>
+                <h2>設定</h2>
+                <p>管理リンク</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="appViewer">
+        <iframe id="targetFrame" src=""></iframe>
+        <button class="back-btn" onclick="closeApp()">メニューに戻る</button>
+    </div>
+
+    <div id="modalOverlay" class="modal-overlay">
+        <div id="pinBox" class="modal-content">
+            <h3>PINコードを入力</h3>
+            <div id="pinDots" class="pin-display">____</div>
+            <div class="numpad">
+                <button onclick="pressNum('1')">1</button><button onclick="pressNum('2')">2</button><button onclick="pressNum('3')">3</button>
+                <button onclick="pressNum('4')">4</button><button onclick="pressNum('5')">5</button><button onclick="pressNum('6')">6</button>
+                <button onclick="pressNum('7')">7</button><button onclick="pressNum('8')">8</button><button onclick="pressNum('9')">9</button>
+                <button onclick="clearPin()">C</button><button onclick="pressNum('0')">0</button>
+                <button onclick="closeModal()">×</button>
+            </div>
+        </div>
+        <div id="settingsBox" class="modal-content" style="display:none; max-width: 600px;">
+            <button class="close-x" onclick="closeModal()">×</button>
+            <h3>⚙️ 管理用リンク</h3>
+            <div class="settings-list">
+                <p style="margin-bottom:10px; color:var(--accent-color);">Apps Script 編集</p>
+                <a href="javascript:void(0)" onclick="openApp('https://script.google.com/u/0/home/projects/1Jov4M55_29oEY4uU25eMo2BzGmRDB2EP0c2NqbdxC5YdVQvS5KfkX5pO/edit')" class="link-btn">📁 レジ売上管理 プロジェクト</a>
+                <a href="javascript:void(0)" onclick="openApp('https://script.google.com/home/projects/1cD_DXQgK5bAbgbPAnmBiclA_h6rnCpUnlbG-8H1_NnvpFIIUrQu9eVKN/edit')" class="link-btn">📁 在庫管理 プロジェクト</a>
+                <p style="margin:15px 0 10px; color:var(--accent-color);">スプレッドシート 閲覧</p>
+                <a href="javascript:void(0)" onclick="openApp('https://docs.google.com/spreadsheets/d/1oWXqfUGiAWUo3_FX5EUBg6Im6DUqRb3E2DiozJ8ZyNg/edit')" class="link-btn">📊 レジ売上データ</a>
+                <a href="javascript:void(0)" onclick="openApp('https://docs.google.com/spreadsheets/d/1duTmkTscsCWhOIlVeYq_IwiXnw9sN20hgArtZ8btW5Q/edit')" class="link-btn">📊 在庫データ</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var wasFullscreen = false;
+
+        // 全画面復帰
+        function restoreFS() {
+            document.getElementById('fsOverlay').classList.remove('show');
+            document.documentElement.requestFullscreen().catch(function(){});
+        }
+
+        // 全画面が解除されたらオーバーレイを表示
+        document.addEventListener('fullscreenchange', function() {
+            if (document.fullscreenElement) {
+                wasFullscreen = true;
+                document.getElementById('fsOverlay').classList.remove('show');
+            } else if (wasFullscreen) {
+                document.getElementById('fsOverlay').classList.add('show');
+            }
+        });
+
+        // フルスクリーン化
+        document.addEventListener('click', function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(function(err) {
+                    console.warn('フルスクリーン失敗: ' + err.message);
+                });
+            }
+        }, false);
+
+        function openApp(url) {
+            if(event) event.stopPropagation();
+            document.getElementById('targetFrame').src = url;
+            document.getElementById('appViewer').style.display = 'block';
+            document.getElementById('modalOverlay').style.display = 'none';
+        }
+
+        function closeApp() {
+            if(event) event.stopPropagation();
+            document.getElementById('targetFrame').src = "";
+            document.getElementById('appViewer').style.display = 'none';
+        }
+
+        let currentPin = "";
+        const CORRECT_PIN = "1234";
+
+        function openPinModal() {
+            if(event) event.stopPropagation();
+            document.getElementById('modalOverlay').style.display = 'flex';
+            document.getElementById('pinBox').style.display = 'block';
+            document.getElementById('settingsBox').style.display = 'none';
+            clearPin();
+        }
+
+        function closeModal() {
+            if(event) event.stopPropagation();
+            document.getElementById('modalOverlay').style.display = 'none';
+        }
+
+        function pressNum(num) {
+            if(event) event.stopPropagation();
+            if (currentPin.length < 4) {
+                currentPin += num;
+                updateDots();
+                if (currentPin.length === 4) {
+                    setTimeout(() => {
+                        if (currentPin === CORRECT_PIN) {
+                            document.getElementById('pinBox').style.display = 'none';
+                            document.getElementById('settingsBox').style.display = 'block';
+                        } else {
+                            alert("PINが違います");
+                            clearPin();
+                        }
+                    }, 200);
+                }
+            }
+        }
+
+        function clearPin() { currentPin = ""; updateDots(); }
+        function updateDots() {
+            let dots = "";
+            for(let i=0; i<4; i++) dots += currentPin[i] ? "●" : "_";
+            document.getElementById('pinDots').innerText = dots;
+        }
+
+function launchFullScreen(element) {
+    if (!document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+        if (element.requestFullscreen) { element.requestFullscreen(); }
+        else if (element.mozRequestFullScreen) { element.mozRequestFullScreen(); }
+        else if (element.webkitRequestFullscreen) { element.webkitRequestFullscreen(); }
+        else if (element.msRequestFullscreen) { element.msRequestFullscreen(); }
     }
-    function closeApp() {
-        document.getElementById('targetFrame').src = "";
-        document.getElementById('appViewer').style.display = 'none';
-    }
-    // F11などで全画面にする際、余計なスクロールを防ぐ
-    document.addEventListener('touchmove', function(e) { e.preventDefault(); }, { passive: false });
-</script>
+}
 
+    </script>
 </body>
 </html>
