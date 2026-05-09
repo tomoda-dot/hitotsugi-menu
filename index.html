@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HITOTSUGI SHOP STORIES</title>
+    <style>
+        /* 基本スタイル：Googleのバーがないので、ここから100%制御できます */
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: #fdfaf5; overflow: hidden; font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
+        header { 
+            margin-bottom: 50px; text-align: left; 
+            padding-left: 40px; padding-top: 30px; 
+        }
+        .logo h1 { font-size: 80px; margin: 0; color: #333; letter-spacing: 4px; }
+        .logo .sub-name { display: block; font-size: 34px; letter-spacing: 1px; margin-left: 25px; color: #555; }
+
+        /* グリッドレイアウト */
+        .grid {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            gap: 20px; padding: 0 40px; max-width: 1200px; margin: 0 auto;
+        }
+        .card {
+            background: white; border-radius: 20px; padding: 30px 20px;
+            text-align: center; text-decoration: none; color: #333;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: transform 0.2s; cursor: pointer;
+        }
+        .card:active { transform: scale(0.95); }
+        .icon-wrap img { width: 80px; height: 80px; margin-bottom: 15px; border-radius: 15px; }
+        .card h2 { margin: 10px 0 5px; font-size: 22px; }
+        .card p { margin: 0; font-size: 14px; color: #888; }
+
+        /* アプリ表示用の枠（全画面対応） */
+        #appViewer {
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; background: white; z-index: 1000;
+        }
+        #targetFrame { width: 100%; height: 100%; border: none; }
+        .back-btn {
+            position: fixed; bottom: 20px; right: 20px;
+            background: rgba(0,0,0,0.7); color: white; border: none;
+            padding: 15px 25px; border-radius: 30px; font-size: 16px; cursor: pointer; z-index: 1001;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <h1>HITOTSUGI</h1>
+        <span class="sub-name">SHOP STORIES</span>
+    </div>
+</header>
+
+<div class="grid">
+    <div class="card" onclick="openApp('https://script.google.com/macros/s/AKfycbz2jvVWg1Hn46G17xkMn2wzdHS83gWipB_OmlLXmPrO-1t38zaKTzQoYbWrTlhRqAZz5Q/exec')">
+        <div class="icon-wrap"><img src="https://lh3.googleusercontent.com/u/0/d/1uS9RJbJQeKfnKIf_4gn7jqK95IGlOsri" alt="レジ"></div>
+        <h2>レジシステム</h2>
+        <p>新規注文へ</p>
+    </div>
+    <div class="card" onclick="openApp('https://script.google.com/macros/s/AKfycbz2jvVWg1Hn46G17xkMn2wzdHS83gWipB_OmlLXmPrO-1t38zaKTzQoYbWrTlhRqAZz5Q/exec?page=admin')">
+        <div class="icon-wrap"><img src="https://lh3.googleusercontent.com/u/0/d/16-Ckrw-R_9rfve8d8obEPCaBM-y2mypB" alt="売上"></div>
+        <h2>売上管理</h2>
+        <p>本日の売上表示</p>
+    </div>
+    <div class="card" onclick="openApp('https://script.google.com/macros/s/AKfycbymOi6GXmAPwVw27yicLIJtKoSXqa9TqmflcQFiHWSV9PasY8fr-5XcUVOblKX2cSo/exec')">
+        <div class="icon-wrap"><img src="https://lh3.googleusercontent.com/u/0/d/1hZlglWZHqQQC9eEdn0A8JbL9lp2vjVvE" alt="在庫"></div>
+        <h2>在庫管理</h2>
+        <p>在庫データ確認</p>
+    </div>
+    <div class="card" onclick="alert('設定は準備中です')">
+        <div class="icon-wrap"><img src="https://lh3.googleusercontent.com/u/0/d/1zvkao0wAcBOorLxsv2T63sj0LsQ2Azye" alt="設定"></div>
+        <h2>設定</h2>
+        <p>管理リンク</p>
+    </div>
+</div>
+
+<div id="appViewer">
+    <button class="back-btn" onclick="closeApp()">メニューに戻る</button>
+    <iframe id="targetFrame" src=""></iframe>
+</div>
+
+<script>
+    function openApp(url) {
+        document.getElementById('targetFrame').src = url;
+        document.getElementById('appViewer').style.display = 'block';
+    }
+    function closeApp() {
+        document.getElementById('targetFrame').src = "";
+        document.getElementById('appViewer').style.display = 'none';
+    }
+    // F11などで全画面にする際、余計なスクロールを防ぐ
+    document.addEventListener('touchmove', function(e) { e.preventDefault(); }, { passive: false });
+</script>
+
+</body>
+</html>
