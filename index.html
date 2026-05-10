@@ -166,6 +166,7 @@
     <div id="modalOverlay" class="modal-overlay">
         <div id="pinBox" class="modal-content">
             <h3>PINコードを入力</h3>
+            <div id="pinError" style="color:#f49576;font-size:14px;font-weight:bold;min-height:24px;margin-top:8px;"></div>
             <div id="pinDots" class="pin-display">____</div>
             <div class="numpad">
                 <button onclick="pressNum('1')">1</button><button onclick="pressNum('2')">2</button><button onclick="pressNum('3')">3</button>
@@ -235,6 +236,7 @@
             document.getElementById('modalOverlay').style.display = 'flex';
             document.getElementById('pinBox').style.display = 'block';
             document.getElementById('settingsBox').style.display = 'none';
+            document.getElementById('pinError').textContent = '';
             clearPin();
         }
 
@@ -245,16 +247,18 @@
 
         function pressNum(num) {
             if(event) event.stopPropagation();
+            document.getElementById('pinError').textContent = '';
             if (currentPin.length < 4) {
                 currentPin += num;
                 updateDots();
                 if (currentPin.length === 4) {
                     setTimeout(() => {
                         if (currentPin === CORRECT_PIN) {
+                            document.getElementById('pinError').textContent = '';
                             document.getElementById('pinBox').style.display = 'none';
                             document.getElementById('settingsBox').style.display = 'block';
                         } else {
-                            alert("PINが違います");
+                            document.getElementById('pinError').textContent = '⚠ PINが違います';
                             clearPin();
                         }
                     }, 200);
