@@ -34,7 +34,7 @@
 
         .container { width: 100%; max-width: 1100px; z-index: 1; }
 
-        header { margin-bottom: 45px; text-align: left; padding-left: 75px; }
+        header { margin-bottom: 45px; text-align: left; padding-left: 10px; }
         .logo { font-weight: bold; line-height: 1.1; color: var(--text-main); text-transform: uppercase; }
         .logo .brand-name { display: block; font-size: 44px; letter-spacing: 2px; }
         .logo .sub-name { display: block; font-size: 34px; letter-spacing: 1px; }
@@ -119,9 +119,6 @@
 </head>
 <body>
 
-<body onclick="launchFullScreen(document.documentElement)">
-
-
     <!-- 全画面復帰オーバーレイ -->
     <div id="fsOverlay" onclick="restoreFS()">
         <div class="fs-restore-icon">⛶</div>
@@ -182,10 +179,7 @@
             <button class="close-x" onclick="closeModal()">×</button>
             <h3>⚙️ 管理用リンク</h3>
             <div class="settings-list">
-                <p style="margin-bottom:10px; color:var(--accent-color);">Apps Script 編集</p>
-                <a href="javascript:void(0)" onclick="openApp('https://script.google.com/u/0/home/projects/1Jov4M55_29oEY4uU25eMo2BzGmRDB2EP0c2NqbdxC5YdVQvS5KfkX5pO/edit')" class="link-btn">📁 レジ売上管理 プロジェクト</a>
-                <a href="javascript:void(0)" onclick="openApp('https://script.google.com/home/projects/1cD_DXQgK5bAbgbPAnmBiclA_h6rnCpUnlbG-8H1_NnvpFIIUrQu9eVKN/edit')" class="link-btn">📁 在庫管理 プロジェクト</a>
-                <p style="margin:15px 0 10px; color:var(--accent-color);">スプレッドシート 閲覧</p>
+                <p style="margin-bottom:10px; color:var(--accent-color);">スプレッドシート 閲覧</p>
                 <a href="javascript:void(0)" onclick="openApp('https://docs.google.com/spreadsheets/d/1oWXqfUGiAWUo3_FX5EUBg6Im6DUqRb3E2DiozJ8ZyNg/edit')" class="link-btn">📊 レジ売上データ</a>
                 <a href="javascript:void(0)" onclick="openApp('https://docs.google.com/spreadsheets/d/1duTmkTscsCWhOIlVeYq_IwiXnw9sN20hgArtZ8btW5Q/edit')" class="link-btn">📊 在庫データ</a>
             </div>
@@ -234,7 +228,7 @@
         }
 
         let currentPin = "";
-        const CORRECT_PIN = "5611";
+        const CORRECT_PIN = "1234";
 
         function openPinModal() {
             if(event) event.stopPropagation();
@@ -274,16 +268,6 @@
             for(let i=0; i<4; i++) dots += currentPin[i] ? "●" : "_";
             document.getElementById('pinDots').innerText = dots;
         }
-
-function launchFullScreen(element) {
-    if (!document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
-        if (element.requestFullscreen) { element.requestFullscreen(); }
-        else if (element.mozRequestFullScreen) { element.mozRequestFullScreen(); }
-        else if (element.webkitRequestFullscreen) { element.webkitRequestFullscreen(); }
-        else if (element.msRequestFullscreen) { element.msRequestFullscreen(); }
-    }
-}
-
     </script>
 </body>
 </html>
